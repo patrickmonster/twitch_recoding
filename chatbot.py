@@ -60,7 +60,6 @@ def parse_message(rawMessage):
     elif rawMessage[:4] in ["PING"]:
         parseMessage['command'],parseMessage['message'] = rawMessage.split()
     else:
-        #try: #129955642
         data = rawMessage.split(";")
         for i in data:
             d = i.split("=")
