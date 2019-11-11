@@ -4,6 +4,11 @@ import json
 import websocket
 import requests
 
+'''
+project by Soungjin
+make 2019.11.02
+'''
+
 class TwitchWSS(websocket.WebSocketApp):
 
     def __init__(self,username,passwd,channel,on_message,on_command=None,command="!",onError=None):
