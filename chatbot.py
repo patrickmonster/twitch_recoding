@@ -4,7 +4,6 @@ import json
 import websocket
 import requests
 
-
 class TwitchWSS(websocket.WebSocketApp):
 
     def __init__(self,username,passwd,channel,on_message,on_command=None,command="!",onError=None):
@@ -17,44 +16,47 @@ class TwitchWSS(websocket.WebSocketApp):
         self.command = command
         self.oncommand = on_command
 
+    def onError(self,message):
+        print("Error",message)
 
-
-    def onClose(self,ws):
+    def onClose(self):
         try:
-            ws.closed()
+            self.closed()
         except:
             pass
         print("### closed ###")
 
-    def onOpen(self,ws):
-        self.onSend(ws,"REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership","CAP")
-        self.onSend(ws,passwd,"PASS")
-        self.onSend(ws,username,"NICK")
-        self.onSend(ws,channel,"JOIN")
+    def onOpen(self):
+        print("Connect to " + self.channel)
+        self.onSend("REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership","CAP")
+        self.onSend(self.passwd,"PASS")
+        self.onSend(self.username,"NICK")
+        self.onSend(self.channel,"JOIN")
     
-    def sendMessage(self,ws, message):
-        self.onSend(ws,channel + " :" +str(message))
+    def sendMessage(self, message):
+        self.onSend(self.channel + " :" +str(message))
 
-    def onSend(self,ws,message ,option ='PRIVMSG'):
-        ws.send(option + " " + message)
+    def onSend(self,message ,option ='PRIVMSG'):
+        self.send(option + " " + message)
 
-    def onMessage(self,ws, message):
+    def onMessage(self, message):
         if message == "":
             return
         data = self.parse_message(message.replace('\r\n',''))
         if data['command'] == "PRIVMSG":
-            if data['message'][0] == comm:
-                if callable(self.oncommand):
-                    self.oncommand(ws,data,data['message'][1:])
+            if data['message'][0] == self.command:
+                if self.oncommand:
+                    self.oncommand(self,data,data['message'][1:])
             else:
-                if callable(self.oncommand):
-                    self._message(ws,data,data['message'])
+                if self._message:
+                    self._message(self,data,data['message'])
         elif data['command'] == "PING":
-            self.onSend(ws,data['message'],"PONG")
+            self.onSend(data['message'],"PONG")
         elif data['command'] == "JOIN":
             print(data['message'])
 
     def run(self):
+        print("run")
         super().run_forever()
 
     def parse_message(self,rawMessage):# 구문분석
