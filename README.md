@@ -13,7 +13,7 @@ python -m pip install websocket requests
 Sample
 =====
 ```
-import chatbot.TwitchWSS
+from chatbot import TwitchWSS
 
 def callback_message(ws,data,msg):
     print(data['display-name'],":"+msg)
@@ -22,7 +22,7 @@ def callback_command(ws,data,message):
     msg = message.split()
     print("COMMAND",msg)
     if msg[0] == "업타임": # !uptime
-        ws.sendMessage("방송시간:" + convert_time(ws.get_stream_running_s()))
+        ws.sendMessage("방송시간:" + ws.get_stream_running_s())
 tw = chatbot.TwitchWSS('username','oauth:pw','#channel',callback_message,on_command=callback_command)
 tw.run()
 ```
