@@ -48,10 +48,3 @@ command="!" # 커맨드로 입력받을 문자
 
 onError=None # 에러처리
 
-
-
-연락처
-===
-
-Soungjin Ryu 
-rsj1120@dongguk.ac.kr
